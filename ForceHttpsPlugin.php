@@ -40,6 +40,9 @@ final class ForceHttpsPlugin extends AbstractPicoPlugin
     public function onRequestUrl(&$url)
     {
       if ($this->is_ssl()) return;
+      // Exclude local connections from https upgrading...
+      if (in_array($_SERVER['REMOTE_ADDR'], array('127.0.0.1', '::1'))) return;
+
       $new_uri = 'https://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
       header('Location: '.$new_uri);
       echo 'Redirecting to <a href="'.$new_uri.'">'.$new_uri.'</a>';
